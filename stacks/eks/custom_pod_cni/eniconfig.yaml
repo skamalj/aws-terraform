@@ -1,0 +1,20 @@
+apiVersion: crd.k8s.amazonaws.com/v1alpha1
+kind: ENIConfig
+metadata: 
+  name: ap-south-1a
+spec: 
+  subnet: SUBNET_ID
+---
+apiVersion: crd.k8s.amazonaws.com/v1alpha1
+kind: ENIConfig
+metadata: 
+  name: ap-south-1b
+spec: 
+  subnet: SUBNET_ID
+---
+apiVersion: crd.k8s.amazonaws.com/v1alpha1
+kind: ENIConfig
+metadata: 
+  name: ap-south-1c
+spec: 
+  subnet: SUBNET_ID
