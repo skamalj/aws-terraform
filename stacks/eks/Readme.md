@@ -2,6 +2,7 @@
 First command creates fully private cluster, second one enables public endpoint for cluster. 
 Nodes are still private with no access to internet
 ```
+terraform init -backend-config="bucket=<your s3 bucket for state>"
 terraform apply
 terraform apply -var="endpoint_public_access=true"
 ```

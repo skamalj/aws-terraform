@@ -1,6 +1,5 @@
 terraform {
   backend "s3" {
-    bucket = "terraform-state-skamalj"
     key    = "devtest/tf/eks"
     region = "eu-central-1"
   }
