@@ -1,3 +1,11 @@
+## Pre-requisites
+*  Install helm, kubectl, terraform
+*  add following charts for LB and karpenter deployment
+```  
+helm repo add karpenter https://charts.karpenter.sh 
+
+helm repo add eks https://aws.github.io/eks-charts
+```
 ## Create Cluster
 First command creates fully private cluster, second one enables public endpoint for cluster. 
 Nodes are still private with no access to internet
@@ -36,7 +44,7 @@ kubectl apply -f aws-load-balancer-controller-service-account.yaml
 
 helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
   -n kube-system \
-  --set clusterName=eks-private-cluster \
+  --set clusterName=${module.eks_private_cluster.eks.name} \
   --set serviceAccount.create=false \
   --set image.repository=602401143452.dkr.ecr.ap-south-1.amazonaws.com/amazon/aws-load-balancer-controller \
   --set serviceAccount.name=aws-load-balancer-controller \
@@ -55,13 +63,13 @@ command below.
 helm upgrade --install --namespace karpenter --create-namespace \
   karpenter karpenter/karpenter \
   --version v0.9.1 \
-  --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=arn:aws:iam::715267777840:role/karpenter-controller-eks-private-cluster \
-  --set clusterName=eks-private-cluster \
+  --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=arn:aws:iam::715267777840:role/karpenter-controller-${module.eks_private_cluster.eks.name} \
+  --set clusterName=${module.eks_private_cluster.eks.name} \
   --set clusterEndpoint=https://07B972F903C2C6BCB4414611A2431306.gr7.ap-south-1.eks.amazonaws.com \
-  --set aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-eks-private-cluster \
+  --set aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${module.eks_private_cluster.eks.name} \
   --set controller.image=715267777840.dkr.ecr.ap-south-1.amazonaws.com/karpenter_controller:v0.9.1 \
   --set webhook.image=715267777840.dkr.ecr.ap-south-1.amazonaws.com/karpenter_webhook:v0.9.1 \
   --wait # for the defaulting webhook to install before creating a Provisioner
 ```
 * Karpenter nodes can be deleted using kubectl, it makes sure that node is cordoned and ten deleted.
-* Terraform destrou leaves out karpenter nodes.  Since TF is not aware of these (inlike node groups) and Karpenter pod goes unscheduled. 
+* Terraform destroy leaves out karpenter nodes.  Since TF is not aware of these (inlike node groups) and Karpenter pod goes unscheduled. 

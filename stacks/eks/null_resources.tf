@@ -21,7 +21,7 @@ resource "null_resource" "deploy_albc" {
         account_id=${local.account_id} enable_alb/aws-load-balancer-controller-service-account.sh | kubectl apply -f -;
         helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
         -n kube-system \
-        --set clusterName=eks-private-cluster \
+        --set clusterName=${module.eks_private_cluster.eks.name} \
         --set serviceAccount.create=false \
         --set image.repository=602401143452.dkr.ecr.ap-south-1.amazonaws.com/amazon/aws-load-balancer-controller \
         --set serviceAccount.name=aws-load-balancer-controller \
@@ -47,14 +47,14 @@ resource "null_resource" "deploy_karpenter" {
         helm upgrade --install --namespace karpenter --create-namespace \
         karpenter karpenter/karpenter \
         --version v0.9.1 \
-        --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=arn:aws:iam::${local.account_id}:role/karpenter-controller-eks-private-cluster \
+        --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=arn:aws:iam::${local.account_id}:role/karpenter-controller-${module.eks_private_cluster.eks.name} \
         --set clusterName=${module.eks_private_cluster.eks.name} \
         --set clusterEndpoint=${module.eks_private_cluster.eks.endpoint} \
         --set aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${module.eks_private_cluster.eks.name} \
         --set controller.image=${local.account_id}.dkr.ecr.ap-south-1.amazonaws.com/karpenter_controller:v0.9.1 \
         --set webhook.image=${local.account_id}.dkr.ecr.ap-south-1.amazonaws.com/karpenter_webhook:v0.9.1 \
         --wait;
-        kubectl apply -f karpenter/provisioner.yaml
+        CLUSTER_NAME=${module.eks_private_cluster.eks.name} kubectl apply -f -
     EOL
   }
   depends_on = [
