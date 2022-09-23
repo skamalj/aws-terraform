@@ -1,6 +1,7 @@
 ## Pre-requisites
-*  Install helm, kubectl, terraform
+*  Install helm, kubectl, terraform, kustomize
 *  add following charts for LB and karpenter deployment
+*  Download ALB and karpenter images and push to ECR. Then update respective commands in null_resource file 
 ```  
 helm repo add karpenter https://charts.karpenter.sh 
 
@@ -34,7 +35,7 @@ kubectl set env daemonset aws-node -n kube-system ENI_CONFIG_LABEL_DEF=topology.
 ```
 terraform apply -var="endpoint_public_access=true" -replace=module.eks_node_group_1.aws_eks_node_group.eks_ng
 ```
-## Deploy ALB Controller
+## Deploy ALB Controller (This is deployed by default, instructions are for reference)
 
 * Replace your account id in the service account yaml file (in annotation)
 * Use helm "upgrade" instead of "install"  after first run.
@@ -55,7 +56,7 @@ helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-contro
   --set vpcId=vpc-0d82c0a2fbdee4b5b
 ```
 
-## Install Karpenter
+## Install Karpenter (This is deployed by default, instructions are for reference)
 * You must download and push images **karpenter_controller** and **karpenter_webhook** to your ECR repository and provide the images in 
 command below. 
 

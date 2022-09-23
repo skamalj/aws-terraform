@@ -54,7 +54,6 @@ resource "null_resource" "deploy_karpenter" {
         --set controller.image=${local.account_id}.dkr.ecr.ap-south-1.amazonaws.com/karpenter_controller:v0.9.1 \
         --set webhook.image=${local.account_id}.dkr.ecr.ap-south-1.amazonaws.com/karpenter_webhook:v0.9.1 \
         --wait;
-        CLUSTER_NAME=${module.eks_private_cluster.eks.name} kubectl apply -f -
     EOL
   }
   depends_on = [
