@@ -18,7 +18,7 @@ resource "null_resource" "deploy_albc" {
   }  # Now deploy application load balancer controller
   provisioner "local-exec" {
     command = <<EOL
-        account_id=${local.account_id} enable_alb/aws-load-balancer-controller-service-account.sh | kubectl apply -f -;
+        account_id=${local.account_id} ${path.module}/enable_alb/aws-load-balancer-controller-service-account.sh | kubectl apply -f -;
         helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
         -n kube-system \
         --set clusterName=${module.eks_private_cluster.eks.name} \
@@ -54,7 +54,7 @@ resource "null_resource" "deploy_karpenter" {
         --set controller.image=${local.account_id}.dkr.ecr.ap-south-1.amazonaws.com/karpenter_controller:v0.9.1 \
         --set webhook.image=${local.account_id}.dkr.ecr.ap-south-1.amazonaws.com/karpenter_webhook:v0.9.1 \
         --wait;
-        CLUSTER_NAME=${var.cluster_name} ./karpenter/provisioner.yaml | kubectl apply -f -;
+        CLUSTER_NAME=${var.cluster_name} ${path.module}/karpenter/provisioner.yaml | kubectl apply -f -;
     EOL
   }
   depends_on = [

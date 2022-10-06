@@ -1,3 +1,7 @@
+output "vpc_id" {
+  value = module.eks_vpc.vpc.id
+  description = "EKS VPC Id"
+}
 output "pod_subnets" {
     value =  module.eks_pod_subnets[*].subnet.id
     description = "Pod Subnet IDs"
@@ -14,4 +18,9 @@ output "karpenter_role_arn" {
 output "node_subnets" {
   value = module.eks_nodes_subnets[*].subnet.id
   description = "Node Subnet IDs"
+}
+
+output "public_subnets" {
+  value = module.eks_public_subnets[*].subnet.id
+  description = "Public Subnet IDs"
 }

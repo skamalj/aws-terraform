@@ -24,3 +24,12 @@ resource "aws_eks_cluster" "eks_cluster" {
     service_ipv4_cidr = var.service_cidr
   }
 }
+
+resource "aws_security_group_rule" "all_egress" {
+  security_group_id = tolist(aws_eks_cluster.eks_cluster.vpc_config[0].security_group_ids)[0]
+  type              = "egress"
+  to_port           = 0
+  from_port         = 0
+  protocol          = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
+}

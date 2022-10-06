@@ -1,0 +1,45 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - eniconfig.yaml
+
+configMapGenerator:
+- name: subnet-list
+  options:
+    disableNameSuffixHash: true
+  behavior: create
+  envs:
+  - subnets.env
+
+replacements:
+- source:
+    kind: ConfigMap
+    name: subnet-list
+    fieldPath: data.ap-south-1a
+  targets:
+  - select:
+      kind: ENIConfig
+      name: ap-south-1a
+    fieldPaths:
+    - spec.subnet
+- source:
+    kind: ConfigMap
+    name: subnet-list
+    fieldPath: data.ap-south-1b
+  targets:
+  - select:
+      kind: ENIConfig
+      name: ap-south-1b
+    fieldPaths:
+    - spec.subnet
+- source:
+    kind: ConfigMap
+    name: subnet-list
+    fieldPath: data.ap-south-1c
+  targets:
+  - select:
+      kind: ENIConfig
+      name: ap-south-1c
+    fieldPaths:
+    - spec.subnet

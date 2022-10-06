@@ -1,0 +1,23 @@
+cat <<EOF
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: default
+spec:
+  requirements:
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values: ["spot"]
+    - key: "node.kubernetes.io/instance-type"
+      operator: In
+      values: ["m5.large", "m5.xlarge","c5.large","c5.xlarge","t2.medium","t2.xlarge","c6a.large","c6a.xlarge"]
+  limits:
+    resources:
+      cpu: 1000
+  provider:
+    subnetSelector:
+      karpenter/eks-node-subnet: "1"
+    securityGroupSelector:
+      aws:eks:cluster-name: $CLUSTER_NAME
+  ttlSecondsAfterEmpty: 30
+EOF
