@@ -8,15 +8,15 @@ externalDatabase:
   database: airflowdb
   user: dbadmin
 
-scheduler:
+flower:
   enabled: false
+redis:
+  enabled: false
+scheduler:
   logCleanup:
-    ## WARNING: scheduler log-cleanup must be disabled if `logs.persistence.enabled` is `true`
     enabled: false
 workers:
-  logCleanup:
-    ## WARNING: workers log-cleanup must be disabled if `logs.persistence.enabled` is `true`
-    enabled: false
+  enabled: false
 logs:
   persistence:
     enabled: true
@@ -25,20 +25,21 @@ logs:
     accessMode: ReadWriteMany
 
 dags:
-  gitSync:
+  persistence:
     enabled: true
-    repo:  https://github.com/skamalj/airflow.git
+    storageClass: "efs-sc"
+    size: 2Gi
+    accessMode: ReadWriteMany
+  gitSync:
+    enabled: false
+    repo: https://github.com/skamalj/airflow.git
 web:
   service:
-    annotations: {
+    annotations:
+      {
         service.beta.kubernetes.io/aws-load-balancer-type: external,
         service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip,
-        service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
-    }
+        service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing,
+      }
     type: LoadBalancer
     externalPort: 80
-
-flower:
-  enabled: false
-redis:
-  enabled: false
