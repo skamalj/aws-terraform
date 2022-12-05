@@ -8,7 +8,7 @@ resource "null_resource" "airflow" {
         kubectl create ns airflow;
         account_id=${local.account_id} ./dbt-glue-sa.sh | kubectl apply -f -;
         helm upgrade --install airflow airflow-stable/airflow \
-        --namespace airflow --values override.yaml \
+        --namespace airflow --values override-baked-dags.yaml \
         --set externalDatabase.host=${module.aurora_rds.db_endpoint} \
         --set externalDatabase.password=${var.master_password};
     EOL

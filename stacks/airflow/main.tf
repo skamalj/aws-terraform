@@ -71,6 +71,9 @@ resource "aws_nat_gateway" "nat_gw" {
 
 data "aws_route_table" "eks_route_table" {
   subnet_id = module.eks_cluster.node_subnets[0]
+  depends_on = [
+    module.eks_cluster
+  ]
 }
 
 ## Associate NGW with route table

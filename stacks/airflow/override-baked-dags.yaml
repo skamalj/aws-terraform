@@ -1,5 +1,8 @@
 airflow:
   executor: KubernetesExecutor
+  image:
+    repository: 715267777840.dkr.ecr.ap-south-1.amazonaws.com/airflow-with-dag
+    tag: v1
 
 postgresql:
   enabled: false
@@ -24,10 +27,6 @@ logs:
     size: 2Gi
     accessMode: ReadWriteMany
 
-dags:
-  gitSync:
-    enabled: true
-    repo: https://github.com/skamalj/airflow.git
 web:
   service:
     annotations:
