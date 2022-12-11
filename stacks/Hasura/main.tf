@@ -33,7 +33,7 @@ module "hasura_service" {
   image = "715267777840.dkr.ecr.ap-south-1.amazonaws.com/hasura/graphql-engine:v2.13.0"
   port = var.port
   execution_role_arn  = module.task_execution_role.role.arn
-  target_group_arn = module.nlb.target_group.arn
+  target_group_arns = [module.nlb.target_group.arn,module.nlb-int.target_group.arn]
   subnets = module.ecs_subnets[*].subnet.id
   security_groups = [aws_security_group.ecs_sg.id]
   aws_region = data.aws_region.current

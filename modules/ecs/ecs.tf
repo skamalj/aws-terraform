@@ -72,10 +72,13 @@ resource "aws_ecs_service" "ecs_service" {
       enable = true
       rollback = true
     }
-    load_balancer {
-        target_group_arn = var.target_group_arn
-        container_name = var.name
-        container_port = var.port     
+    dynamic "load_balancer" {
+        for_each = var.target_group_arns
+        content {
+          target_group_arn = load_balancer.value
+          container_name = var.name
+          container_port = var.port            
+        }   
     }
     network_configuration {
       subnets = var.subnets

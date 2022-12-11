@@ -26,7 +26,7 @@ resource "aws_appautoscaling_policy" "ecs_policy" {
 
       dimensions {
         name  = "LoadBalancer"
-        value = module.nlb.nlb_metric_suffix
+        value = module.nlb.lb_metric_suffix
       }
     }
   }

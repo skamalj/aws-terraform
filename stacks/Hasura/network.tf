@@ -14,7 +14,7 @@ module "lb_subnets" {
   cidr_block        = cidrsubnet(local.lb_subnet_range, 4, count.index)
   vpc_id            = module.hasura_vpc.vpc.id
   is_public         = true
-  name              = join("-", ["hasura", data.aws_availability_zones.available.names[count.index]])
+  name              = join("-", ["hasura-lb", data.aws_availability_zones.available.names[count.index]])
 }
 
 resource "aws_internet_gateway" "vpc_igw" {
@@ -47,7 +47,7 @@ module "ecs_subnets" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
   cidr_block        = cidrsubnet(local.ecs_subnet_range, 4, count.index)
   vpc_id            = module.hasura_vpc.vpc.id
-  name              = join("-", ["hasura", data.aws_availability_zones.available.names[count.index]])
+  name              = join("-", ["hasura-ecs", data.aws_availability_zones.available.names[count.index]])
 }
 
 module "rds_subnets" {
@@ -57,8 +57,34 @@ module "rds_subnets" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
   cidr_block        = cidrsubnet(local.rds_subnet_range, 4, count.index)
   vpc_id            = module.hasura_vpc.vpc.id
-  name              = join("-", ["hasura", data.aws_availability_zones.available.names[count.index]])
+  name              = join("-", ["hasura-rds", data.aws_availability_zones.available.names[count.index]])
 }
+
+# Create security group for ALB 
+resource "aws_security_group" "alb_sg" {
+  name   = "alb_sg"
+  vpc_id = module.hasura_vpc.vpc.id
+}
+
+resource "aws_security_group_rule" "alb_sg_rule_allow_80" {
+  security_group_id = aws_security_group.alb_sg.id
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 80
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+
+resource "aws_security_group_rule" "alb_sg_rule_default_egress" {
+  security_group_id = aws_security_group.alb_sg.id
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
 
 module "nlb" {
   source  = "../../modules/nlb"
@@ -66,6 +92,15 @@ module "nlb" {
   vpc_id  = module.hasura_vpc.vpc.id
   subnets = module.lb_subnets[*].subnet.id
   port    = var.port
+}
+
+module "nlb-int" {
+  source  = "../../modules/nlb"
+  name    = join("-",[var.name,"int"])
+  vpc_id  = module.hasura_vpc.vpc.id
+  subnets = module.lb_subnets[*].subnet.id
+  port    = var.port
+  is_internal = true
 }
 
 # Create security group for private end points 
