@@ -18,8 +18,6 @@ profiles (
 
 * Create VPC Link for internal NLB  (Select Rest API option on screen)
   * This can take upto 5 minutes  
-http://hasura-int-1c152f0aaa3b7be2.elb.ap-south-1.amazonaws.com/v1/graphql
-
 * Create API -> Add resource "profile" -> Add method "GET"
   * In the "Integration Request" :-
     * Select Type as VPC_LINK and Method "POST"
@@ -41,12 +39,14 @@ http://hasura-int-1c152f0aaa3b7be2.elb.ap-south-1.amazonaws.com/v1/graphql
   ```
 ### This Mapping Template can be added to any or both of the API endpoints to enable RBAC.
 
+This is described in the [blog post](https://www.kamalsblog.com/2022/12/implement-rbac-for-data-apis-using-aws-cognito-apigw-graphql.html)
+
 ```
 #set($userGroups = $context.authorizer.claims['cognito:groups'])
-#if($userGroups.contains("admin"))
-  #set($context.requestOverride.header.X-Hasura-Role = "admin")
+#if($userGroups.contains("Reader"))
+  #set($context.requestOverride.header.X-Hasura-Role = "Reader")
 #else
-   #set($context.requestOverride.header.X-Hasura-Role = "Reader")    
+   #set($context.requestOverride.header.X-Hasura-Role = "Public")    
 #end
 
 ```
