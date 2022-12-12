@@ -13,10 +13,10 @@ resource "null_resource" "airflow" {
         --set externalDatabase.password=${var.master_password};
     EOL
   }
-  provisioner "local-exec" {
-    when    = destroy
-    command = "helm uninstall airflow --namespace airflow"
-  }
+  #provisioner "local-exec" {
+  #  when    = destroy
+  #  command = "helm uninstall airflow --namespace airflow"
+  #}
   depends_on = [
     module.eks_cluster,
     null_resource.efs
@@ -41,10 +41,10 @@ resource "null_resource" "efs" {
         airflow_efs_id=${aws_efs_file_system.airflow.id} ./storageclass.sh | kubectl apply -f -;
     EOL
   }
-  provisioner "local-exec" {
-    when    = destroy
-    command = "helm uninstall aws-efs-csi-driver --namespace efs-ns"
-  }
+  #provisioner "local-exec" {
+  #  when    = destroy
+  #  command = "helm uninstall aws-efs-csi-driver --namespace efs-ns"
+  #}
   depends_on = [
     module.eks_cluster
   ]
