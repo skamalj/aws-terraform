@@ -1,3 +1,4 @@
+This repository is for this [blog post](https://www.kamalsblog.com/2022/12/build-scalable-data-api-with-graphql-on-ecs.html)
 ## Create Hasura instance 
 ```
 export TF_VAR_master_password=<password>
