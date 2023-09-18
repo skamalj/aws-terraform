@@ -55,6 +55,7 @@ module "eks_private_cluster" {
   subnet_ids             = module.eks_cluster_subnets[*].subnet.id
   security_group_ids     = [aws_security_group.user_eks_sg.id]
   endpoint_public_access = var.endpoint_public_access
+  k8s_version = "1.27"
 }
 
 module "eks_node_group_1" {

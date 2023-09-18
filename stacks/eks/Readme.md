@@ -17,13 +17,20 @@ terraform apply -var="endpoint_public_access=true"
 ```
 ## Enable Custom Networking - POD Subnets
 
+
+Update the addon version based on this [documentation](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html)
+
+``````
+ aws eks create-addon --cluster-name <clustername> --addon-name vpc-cni --addon-version v1.15.0-eksbuild.2 --service-account-role-arn arn:aws:iam::<account number>:role/AmazonEKSVPCCNIRole
+```
+
 ### Enable CNI custom networking on controller
 ```
 kubectl set env daemonset aws-node -n kube-system AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG=true
 ```
 ### Apply ENI configuration to each zone, specifying pod subnet per zone
 ```
-terraform output pod_subnets | grep -v EOT > custom_pod_cni/subnets.env
+terraform output pod_subnets | grep  "=" | cut -d '"' -f 2 > custom_pod_cni/subnets.env
 kustomize build custom_pod_cni/ | kubectl apply -f - 
 ```
 ### Update CNI so that it picks corresponding ENIConfig for each zone. Since subnets are zonal, this ensures that in case of multizone cluster

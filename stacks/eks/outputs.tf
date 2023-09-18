@@ -1,5 +1,5 @@
 output "pod_subnets" {
-    value =  module.eks_pod_subnets[*].subnet.id
+    value =  [for s in module.eks_pod_subnets : join("=",[s.subnet.availability_zone,s.subnet.id])]
     description = "Pod Subnet IDs"
 }
 
