@@ -18,14 +18,14 @@ resource "aws_iam_role_policy_attachment" "AmazonEKSFargatePodExecutionRolePolic
   role       = aws_iam_role.fargate_role.name
 }
 
-resource "aws_eks_fargate_profile" "fargate_karpenter" {
+resource "aws_eks_fargate_profile" "fargate_userfg" {
   cluster_name           = var.cluster_name
   fargate_profile_name   = "fargate_karpenter"
   pod_execution_role_arn = aws_iam_role.fargate_role.arn
   subnet_ids             = module.eks_pod_subnets[*].subnet.id
 
   selector {
-    namespace = "karpenter"
+    namespace = "userfg"
   }
     depends_on = [
     module.eks_private_cluster

@@ -81,3 +81,4 @@ helm upgrade --install --namespace karpenter --create-namespace \
 ```
 * Karpenter nodes can be deleted using kubectl, it makes sure that node is cordoned and ten deleted.
 * Terraform destroy leaves out karpenter nodes.  Since TF is not aware of these (inlike node groups) and Karpenter pod goes unscheduled. 
+* Must add karpenter node role to aws-auth
