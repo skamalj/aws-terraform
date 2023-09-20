@@ -26,3 +26,11 @@ module "eks_cni_role" {
   policies = ["AmazonEKS_CNI_Policy"]
   assume_role_policy = data.aws_iam_policy_document.eks_cni_assume_role_policy.json
 }
+
+resource "aws_eks_addon" "eks_cni" {
+  cluster_name = var.cluster_name
+  addon_name   = "vpc-cni"
+  depends_on = [
+    module.eks_private_cluster
+  ]
+}

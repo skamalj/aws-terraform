@@ -4,6 +4,8 @@ kind: Provisioner
 metadata:
   name: default
 spec:
+  kubeletConfiguration:
+    maxPods: 10
   requirements:
     - key: karpenter.sh/capacity-type
       operator: In
