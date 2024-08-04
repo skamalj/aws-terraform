@@ -2,13 +2,13 @@
 *  Install helm, kubectl, terraform, kustomize
 *  add following charts for LB and karpenter deployment
 *  Download ALB and karpenter images and push to ECR. Then update respective commands in null_resource file 
+*  Enable service linked role for spot instances (Required for karpenter)
 ```  
 helm repo add karpenter https://charts.karpenter.sh 
 
 helm repo add eks https://aws.github.io/eks-charts
 
-cd karpenter
-aws cloudformation deploy --template-file cloudformation.yaml  --stack-name karpenter --parameter-overrides ClusterName=dev --region ap-south-1 --capabilities "CAPABILITY_NAMED_IAM"
+aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 ```
 ## Create Cluster
 First command creates fully private cluster, second one enables public endpoint for cluster. 
