@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     key    = "devtest/tf/eks"
-    region = "eu-central-1"
+    region = "ap-south-1"
   }
   required_providers {
     aws = {

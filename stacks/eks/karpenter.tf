@@ -70,3 +70,9 @@ resource "aws_iam_role_policy_attachment" "karpenter_role_policy_attachment" {
   role       = aws_iam_role.karpenter_controller_role.name
   policy_arn = "arn:aws:iam::${local.account_id}:policy/KarpenterControllerPolicy-${var.cluster_name}"
 }
+
+
+resource "aws_iam_instance_profile" "karpenter" {
+  name = "KarpenterNodeInstanceProfile-${var.cluster_name}"
+  role = "eksNodeRole"
+}

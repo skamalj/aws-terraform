@@ -6,6 +6,9 @@
 helm repo add karpenter https://charts.karpenter.sh 
 
 helm repo add eks https://aws.github.io/eks-charts
+
+cd karpenter
+aws cloudformation deploy --template-file cloudformation.yaml  --stack-name karpenter --parameter-overrides ClusterName=dev --region ap-south-1 --capabilities "CAPABILITY_NAMED_IAM"
 ```
 ## Create Cluster
 First command creates fully private cluster, second one enables public endpoint for cluster. 

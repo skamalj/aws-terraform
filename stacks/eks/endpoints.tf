@@ -56,6 +56,7 @@ module "eks_endpoints" {
     "com.amazonaws.ap-south-1.ecr.dkr" = "Interface",
     "com.amazonaws.ap-south-1.logs"    = "Interface",
     "com.amazonaws.ap-south-1.sts"     = "Interface",
+    "com.amazonaws.ap-south-1.sqs"     = "Interface",
     # Required by ALBC for private nodes
     "com.amazonaws.ap-south-1.elasticloadbalancing" = "Interface"
     # Required by Karpenter for private nodes

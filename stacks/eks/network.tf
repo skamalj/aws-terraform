@@ -30,7 +30,8 @@ module "eks_nodes_subnets" {
   vpc_id            = module.eks_vpc.vpc.id
   name              = join("-", ["eks-nodes", data.aws_availability_zones.available.names[count.index]])
   tags = {
-    "karpenter/eks-node-subnet"                 = "1"
+    "karpenter/eks-node-subnet"                 = "1",
+    "karpenter.sh/discovery"                    = var.cluster_name
   }
   depends_on = [
     module.eks_vpc
