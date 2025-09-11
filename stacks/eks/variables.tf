@@ -14,11 +14,11 @@ variable "public_cidr" {
   default     = "10.3.0.0/16"
 }
 variable "endpoint_public_access" {
-  default = false
+  default = true
 }
 variable "k8s_version" {
   default = "1.33"
 }
 variable "instance_types" {
-  default = ["g4dn.xlarge"]
+  default = ["p5.4xlarge"]
 }
