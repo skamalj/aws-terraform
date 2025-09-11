@@ -17,5 +17,8 @@ variable "endpoint_public_access" {
   default = false
 }
 variable "k8s_version" {
-  default = "1.30"
+  default = "1.33"
+}
+variable "instance_types" {
+  default = ["g4dn.xlarge"]
 }

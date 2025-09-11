@@ -6,11 +6,11 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 4.12.0"
+      version = ">= 5.16.0"
     }
     tls = {
       source = "hashicorp/tls"
-      version = "3.3.0"
+      version = ">= 3.3.0"
     }
   }
 }
@@ -22,6 +22,7 @@ provider "tls" {
 # Configure the AWS Provider
 provider "aws" {
   region = "ap-south-1"
+  profile = "skamalj-dev"
 }
 
 
@@ -61,6 +62,7 @@ module "eks_private_cluster" {
 module "eks_node_group_1" {
   source        = "../../modules/eks-node-group"
   cluster_name  = var.cluster_name
+  instance_types = var.instance_types
   node_role_arn = module.node_role.role.arn
   subnet_ids    = module.eks_nodes_subnets[*].subnet.id
   depends_on = [
