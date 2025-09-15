@@ -61,7 +61,7 @@ resource "null_resource" "deploy_karpenter" {
     command = <<EOL
         helm upgrade --install  karpenter oci://public.ecr.aws/karpenter/karpenter \
         --namespace karpenter --create-namespace \
-        --version 0.37.0 \
+        --version 1.6.3 \
         --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=arn:aws:iam::${local.account_id}:role/karpenter-controller-${module.eks_private_cluster.eks.name} \
         --set settings.clusterName=${module.eks_private_cluster.eks.name} \
         --set settings.interruptionQueue=${module.eks_private_cluster.eks.name} \
@@ -73,7 +73,7 @@ resource "null_resource" "deploy_karpenter" {
         --set controller.resources.limits.cpu=1 \
         --set controller.resources.limits.memory=1Gi \
         --set controller.image.repository=${local.account_id}.dkr.ecr.ap-south-1.amazonaws.com/karpenter_controller \
-        --set controller.image.digest="sha256:cbf46e9a2985cfb84e21fbcc58efff0e8a2de79943a4a63daf0401da9fceb78e"  \
+        --set controller.image.digest="sha256:80e5b6f291a9c1cab01b8cbfa39050f2d685ed9314fdc1e87a28978bc7324d56"  \
         --wait; \
         CLUSTER_NAME=${var.cluster_name} ./karpenter/provisioner.yaml;
     EOL

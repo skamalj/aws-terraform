@@ -22,7 +22,7 @@ provider "tls" {
 # Configure the AWS Provider
 provider "aws" {
   region = "ap-south-1"
-  profile = "skamalj-dev"
+  profile = "dev"
 }
 
 
@@ -79,4 +79,11 @@ resource "aws_iam_openid_connect_provider" "eks_oidc_provider" {
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = [data.tls_certificate.eks_oidc_issuer.certificates[0].sha1_fingerprint]
   url             = module.eks_private_cluster.eks.identity.0.oidc.0.issuer
+}
+
+resource "aws_ec2_tag" "eks_cluster_sg_tag" {
+  resource_id = tolist(module.eks_private_cluster.eks.vpc_config[0].security_group_ids)[0]
+
+  key   = "karpenter.sh/discovery"
+  value = var.cluster_name
 }
