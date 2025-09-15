@@ -19,6 +19,8 @@ variable "endpoint_public_access" {
 variable "k8s_version" {
   default = "1.33"
 }
+#t3.medium
+#p5.4xlarge
 variable "instance_types" {
-  default = ["p5.4xlarge"]
+  default = ["t3.medium"]
 }

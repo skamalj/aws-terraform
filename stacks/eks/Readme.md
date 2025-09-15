@@ -23,7 +23,7 @@ terraform apply -var="endpoint_public_access=true"
 
 Update the addon version based on this [documentation](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html)
 
-``````
+```
  aws eks create-addon --cluster-name <clustername> --addon-name vpc-cni --addon-version v1.15.0-eksbuild.2 --service-account-role-arn arn:aws:iam::<account number>:role/AmazonEKSVPCCNIRole
 ```
 
