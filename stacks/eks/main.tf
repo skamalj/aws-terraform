@@ -22,7 +22,7 @@ provider "tls" {
 # Configure the AWS Provider
 provider "aws" {
   region = "ap-south-1"
-  profile = "dev"
+  profile = "skamalj-dev"
 }
 
 
@@ -82,8 +82,15 @@ resource "aws_iam_openid_connect_provider" "eks_oidc_provider" {
 }
 
 resource "aws_ec2_tag" "eks_cluster_sg_tag" {
-  resource_id = tolist(module.eks_private_cluster.eks.vpc_config[0].security_group_ids)[0]
+  resource_id = data.aws_security_groups.eks_sg.ids[0]
 
   key   = "karpenter.sh/discovery"
   value = var.cluster_name
+}
+
+data "aws_security_groups" "eks_sg" {
+  tags =  {
+     "kubernetes.io/cluster/${var.cluster_name}" =  "owned"
+  }
+  depends_on = [ module.eks_private_cluster ]
 }

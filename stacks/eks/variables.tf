@@ -24,3 +24,6 @@ variable "k8s_version" {
 variable "instance_types" {
   default = ["t3.medium"]
 }
+variable "s3_bucket_name_for_models" {
+  type = string
+}
