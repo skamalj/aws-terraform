@@ -27,7 +27,7 @@ spec:
         kind: EC2NodeClass
         name: default
   limits:
-    cpu: 1000
+    cpu: 8000
   disruption:
     consolidationPolicy: WhenEmptyOrUnderutilized
     consolidateAfter: 1m
@@ -37,7 +37,6 @@ kind: EC2NodeClass
 metadata:
   name: default
 spec:
-  amiFamily: AL2 # Amazon Linux 2
   instanceProfile: "KarpenterNodeInstanceProfile-dev" # replace with your cluster name
   blockDeviceMappings:
   - deviceName: /dev/xvda
@@ -46,7 +45,7 @@ spec:
       volumeType: gp3
       deleteOnTermination: true
   amiSelectorTerms:
-    - name: "*" # <- automatically upgrade when a new AL2 EKS Optimized AMI is released. This is unsafe for production workloads. Validate AMIs in lower environments before deploying them to production.
+    - alias: "al2023@v20250904"
   subnetSelectorTerms:
     - tags:
         karpenter.sh/discovery: "${CLUSTER_NAME}" # replace with your cluster name

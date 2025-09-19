@@ -18,14 +18,15 @@ Resources:
         {
           "Version": "2012-10-17",
           "Statement": [
-            {
+                        {
               "Sid": "AllowScopedEC2InstanceAccessActions",
               "Effect": "Allow",
               "Resource": [
                 "arn:${AWS::Partition}:ec2:${AWS::Region}::image/*",
                 "arn:${AWS::Partition}:ec2:${AWS::Region}::snapshot/*",
                 "arn:${AWS::Partition}:ec2:${AWS::Region}:*:security-group/*",
-                "arn:${AWS::Partition}:ec2:${AWS::Region}:*:subnet/*"
+                "arn:${AWS::Partition}:ec2:${AWS::Region}:*:subnet/*",
+                "arn:${AWS::Partition}:ec2:${AWS::Region}:*:capacity-reservation/*"
               ],
               "Action": [
                 "ec2:RunInstances",
@@ -223,6 +224,7 @@ Resources:
                   "aws:ResourceTag/kubernetes.io/cluster/${ClusterName}": "owned",
                   "aws:ResourceTag/topology.kubernetes.io/region": "${AWS::Region}",
                   "aws:RequestTag/kubernetes.io/cluster/${ClusterName}": "owned",
+                  "aws:RequestTag/eks:eks-cluster-name": "${ClusterName}",
                   "aws:RequestTag/topology.kubernetes.io/region": "${AWS::Region}"
                 },
                 "StringLike": {

@@ -11,7 +11,7 @@ spec:
   storageClassName: "" # Required for static provisioning
   claimRef: # To ensure no other PVCs can claim this PV
     namespace: default # Namespace is required even though it's in "default" namespace.
-    name: s3-pvc # Name of your PVC
+    name: s3-models-pvc # Name of your PVC
   mountOptions:
     - allow-delete
     - region ap-south-1
@@ -19,7 +19,7 @@ spec:
     driver: s3.csi.aws.com # required
     volumeHandle: s3-csi-driver-volume # Must be unique
     volumeAttributes:
-      bucketName: s3-csi-bucket-name
+      bucketName: aws-huggingface-models
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
