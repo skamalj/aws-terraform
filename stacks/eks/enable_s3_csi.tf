@@ -4,22 +4,27 @@ data "aws_iam_policy_document" "eks_s3csi_assume_role_policy" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
     effect  = "Allow"
+
     condition {
       test     = "StringEquals"
-      variable = "${replace(module.eks_private_cluster.eks.identity.0.oidc.0.issuer, "https://", "")}:sub"
+      variable = "${replace(module.eks_private_cluster.eks.identity[0].oidc[0].issuer, "https://", "")}:sub"
       values   = ["system:serviceaccount:kube-system:s3-csi-driver-sa"]
     }
+
     condition {
       test     = "StringEquals"
-      variable = "${replace(module.eks_private_cluster.eks.identity.0.oidc.0.issuer, "https://", "")}:aud"
+      variable = "${replace(module.eks_private_cluster.eks.identity[0].oidc[0].issuer, "https://", "")}:aud"
       values   = ["sts.amazonaws.com"]
     }
+
     principals {
-      identifiers = [local.oidc_arb]
       type        = "Federated"
+      identifiers = [local.oidc_arb]
     }
   }
 }
+
+
 
 resource "aws_iam_policy" "s3csi_policy" {
     name = "AmazonS3CSIDriverPolicy"

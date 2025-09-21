@@ -52,6 +52,7 @@ module "eks_endpoints" {
   for_each = {
     "com.amazonaws.ap-south-1.s3"      = "Gateway",
     "com.amazonaws.ap-south-1.ec2"     = "Interface",
+    "com.amazonaws.ap-south-1.eks"     = "Interface",
     "com.amazonaws.ap-south-1.ecr.api" = "Interface",
     "com.amazonaws.ap-south-1.ecr.dkr" = "Interface",
     "com.amazonaws.ap-south-1.logs"    = "Interface",

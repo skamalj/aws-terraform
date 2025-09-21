@@ -15,11 +15,13 @@ spec:
   mountOptions:
     - allow-delete
     - region ap-south-1
+    - prefix models/
   csi:
     driver: s3.csi.aws.com # required
     volumeHandle: s3-csi-driver-volume # Must be unique
     volumeAttributes:
       bucketName: aws-huggingface-models
+      stsRegion: ap-south-1
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

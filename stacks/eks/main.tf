@@ -22,7 +22,7 @@ provider "tls" {
 # Configure the AWS Provider
 provider "aws" {
   region = "ap-south-1"
-  profile = "skamalj-dev"
+  profile = "dev"
 }
 
 
@@ -38,7 +38,7 @@ module "cluster_role" {
 module "node_role" {
   source             = "../../modules/iam_role"
   name               = "eksNodeRole"
-  policies           = ["AmazonEKSWorkerNodePolicy", "AmazonEKS_CNI_Policy", "AmazonEC2ContainerRegistryReadOnly"]
+  policies           = ["AmazonEKSWorkerNodePolicy", "AmazonEKS_CNI_Policy", "AmazonEC2ContainerRegistryReadOnly", "AmazonSSMManagedInstanceCore"]
   assume_role_policy = file("iam_policies/node_assume_role_policy.json")
 }
 
@@ -63,6 +63,7 @@ module "eks_node_group_1" {
   source        = "../../modules/eks-node-group"
   cluster_name  = var.cluster_name
   instance_types = var.instance_types
+  desired_size = 2
   node_role_arn = module.node_role.role.arn
   subnet_ids    = module.eks_nodes_subnets[*].subnet.id
   depends_on = [

@@ -1,4 +1,5 @@
-resource "aws_eks_addon" "enable_s3csi_driver" {
-  cluster_name = module.eks_private_cluster.eks.name
-  addon_name   = "aws-mountpoint-s3-csi-driver"
-}
+#resource "aws_eks_addon" "enable_s3csi_driver" {
+#  cluster_name = module.eks_private_cluster.eks.name
+#  addon_name   = "aws-mountpoint-s3-csi-driver"
+#  depends_on = [ resource.aws_eks_fargate_profile.fargate_system ]
+#}
