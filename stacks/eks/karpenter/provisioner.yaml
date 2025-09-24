@@ -2,7 +2,7 @@ cat <<EOF | envsubst | kubectl apply -f -
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
-  name: default
+  name: cpu-pool
 spec:
   template:
     spec:
@@ -15,17 +15,70 @@ spec:
           values: ["linux"]
         - key: karpenter.sh/capacity-type
           operator: In
-          values: ["spot"]
+          values: ["spot", "on-demand"]
         - key: karpenter.k8s.aws/instance-category
           operator: In
           values: ["c", "m", "r"]
-        - key: karpenter.k8s.aws/instance-generation
-          operator: Gt
-          values: ["2"]
       nodeClassRef:
         group: karpenter.k8s.aws
         kind: EC2NodeClass
-        name: default
+        name: cpu-class
+  limits:
+    cpu: 16000
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 1m   
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: cpu-class
+spec:
+  amiFamily: AL2023
+  instanceProfile: "KarpenterNodeInstanceProfile-dev"
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: "100Gi"
+        volumeType: gp3
+        deleteOnTermination: true
+  amiSelectorTerms:
+    - alias: "al2023@latest"
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "${CLUSTER_NAME}"
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "${CLUSTER_NAME}"
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: gpu-pool
+spec:
+  template:
+    spec:
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+        - key: karpenter.k8s.aws/instance-family
+          operator: In
+          values: ["g4dn", "g5"]
+      taints:
+        - key: nvidia.com/gpu
+          value: "true"
+          effect: NoSchedule
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: gpu-class
   limits:
     cpu: 8000
   disruption:
@@ -35,26 +88,22 @@ spec:
 apiVersion: karpenter.k8s.aws/v1
 kind: EC2NodeClass
 metadata:
-  name: default
+  name: gpu-class
 spec:
   amiFamily: AL2023
-  instanceProfile: "KarpenterNodeInstanceProfile-dev" # replace with your cluster name
+  instanceProfile: "KarpenterNodeInstanceProfile-dev"
   blockDeviceMappings:
-  - deviceName: /dev/xvda
-    ebs:
-      volumeSize: "100Gi" # must be >= snapshot size
-      volumeType: gp3
-      deleteOnTermination: true
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: "100Gi"
+        volumeType: gp3
+        deleteOnTermination: true
   amiSelectorTerms:
     - alias: "al2023@latest"
   subnetSelectorTerms:
     - tags:
-        karpenter.sh/discovery: "${CLUSTER_NAME}" # replace with your cluster name
+        karpenter.sh/discovery: "${CLUSTER_NAME}"
   securityGroupSelectorTerms:
     - tags:
-        karpenter.sh/discovery: "${CLUSTER_NAME}" # replace with your cluster name
-#   - id: "${GPU_AMI_ID}" # <- GPU Optimized AMD AMI 
-#   - name: "amazon-eks-node-${K8S_VERSION}-*" # <- automatically upgrade when a new AL2 EKS Optimized AMI is released. This is unsafe for production workloads. Validate AMIs in lower environments before deploying them to production.
+        karpenter.sh/discovery: "${CLUSTER_NAME}"
 EOF
-
-

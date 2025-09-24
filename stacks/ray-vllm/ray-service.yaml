@@ -11,19 +11,19 @@ spec:
       args:
         llm_configs:
         - model_loading_config:
-            model_id: qwen2.5-7b-instruct
-            model_source: /models/Qwen2.5-7B-Instruct/
+            model_id: Qwen2.5VL3B
+            model_source: /models/Qwen2.5VL3B/snapshots/66285546d2b821cf421d4f5eb2576359d3770cd3/
           engine_kwargs:
-            dtype: bfloat16
+            dtype: half
             max_model_len: 1024
             device: auto
-            gpu_memory_utilization: 0.75
+            gpu_memory_utilization: 0.9
           deployment_config:
             autoscaling_config:
               min_replicas: 1
               max_replicas: 1
-              target_ongoing_requests: 64
-            max_ongoing_requests: 128
+              target_ongoing_requests: 16
+            max_ongoing_requests: 32
   rayClusterConfig:
     rayVersion: "2.46.0"
     headGroupSpec:
@@ -75,6 +75,11 @@ spec:
         num-gpus: "1"
       template:
         spec:
+          tolerations:
+            - key: "nvidia.com/gpu"
+              operator: "Equal"
+              value: "true"
+              effect: "NoSchedule"
           volumes:
           - name: models-storage-volume
             persistentVolumeClaim:
@@ -87,11 +92,11 @@ spec:
               mountPath: /models
             resources:
               limits:
-                cpu: 32
-                memory: 32Gi
+                cpu: 4
+                memory: 12Gi
                 nvidia.com/gpu: "1"
               requests:
-                cpu: 32
-                memory: 32Gi
+                cpu: 4
+                memory: 12Gi
                 nvidia.com/gpu: "1"
 

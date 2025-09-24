@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nvidia-device-plugin-daemonset
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      name: nvidia-device-plugin-ds
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        name: nvidia-device-plugin-ds
+    spec:
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+      nodeSelector:
+        karpenter.sh/nodepool: "gpu-pool"   # Only schedule on GPU nodes
+      priorityClassName: "system-node-critical"
+      containers:
+      - image: 010526271896.dkr.ecr.ap-south-1.amazonaws.com/nvidia/k8s-device-plugin:v0.17.1
+        name: nvidia-device-plugin-ctr
+        env: []
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        volumeMounts:
+        - name: kubelet-device-plugins-dir
+          mountPath: /var/lib/kubelet/device-plugins
+      volumes:
+      - name: kubelet-device-plugins-dir
+        hostPath:
+          path: /var/lib/kubelet/device-plugins
+          type: Directory
