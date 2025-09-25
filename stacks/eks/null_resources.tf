@@ -53,37 +53,37 @@ resource "null_resource" "deploy_karpenter_cf_template" {
   depends_on = [ module.eks_private_cluster ]
 }
 
-resource "null_resource" "deploy_karpenter" {
-  # Run this provisioner always
-  triggers = {
-    always_run = timestamp()
-  }  # Now deploy application load balancer controller
-  provisioner "local-exec" {
-    command = <<EOL
-        helm upgrade --install  karpenter oci://public.ecr.aws/karpenter/karpenter \
-        --namespace karpenter --create-namespace \
-        --version 1.7.1 \
-        --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=arn:aws:iam::${local.account_id}:role/karpenter-controller-${module.eks_private_cluster.eks.name} \
-        --set settings.clusterName=${module.eks_private_cluster.eks.name} \
-        --set settings.interruptionQueue=${module.eks_private_cluster.eks.name} \
-        --set settings.clusterEndpoint=${module.eks_private_cluster.eks.endpoint} \
-        --set settings.isolatedVPC="true" \
-        --set settings.aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${module.eks_private_cluster.eks.name} \
-        --set controller.resources.requests.cpu=1 \
-        --set controller.resources.requests.memory=1Gi \
-        --set controller.resources.limits.cpu=1 \
-        --set controller.resources.limits.memory=1Gi \
-        --set controller.image.repository=${local.account_id}.dkr.ecr.ap-south-1.amazonaws.com/karpenter_controller \
-        --set controller.image.digest="sha256:0a2b4f6364582dd0ffdf8dfe7f05d5b0e531ccdbb9e035fea3b316b5f5c72935"  \
-        --wait; \
-        CLUSTER_NAME=${var.cluster_name} ./karpenter/provisioner.yaml;
-    EOL
-  }
-  depends_on = [
-    null_resource.get_cluster_config,
-    null_resource.deploy_karpenter_cf_template
-  ]
-}
+#resource "null_resource" "deploy_karpenter" {
+#  # Run this provisioner always
+#  triggers = {
+#    always_run = timestamp()
+#  }  # Now deploy application load balancer controller
+#  provisioner "local-exec" {
+#    command = <<EOL
+#        helm upgrade --install  karpenter oci://public.ecr.aws/karpenter/karpenter \
+#        --namespace karpenter --create-namespace \
+#        --version 1.7.1 \
+#        --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=arn:aws:iam::${local.account_id}:role/karpenter-controller-${module.eks_private_cluster.eks.name} \
+#        --set settings.clusterName=${module.eks_private_cluster.eks.name} \
+#        --set settings.interruptionQueue=${module.eks_private_cluster.eks.name} \
+#        --set settings.clusterEndpoint=${module.eks_private_cluster.eks.endpoint} \
+#        --set settings.isolatedVPC="true" \
+#        --set settings.aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${module.eks_private_cluster.eks.name} \
+#        --set controller.resources.requests.cpu=1 \
+#        --set controller.resources.requests.memory=1Gi \
+#        --set controller.resources.limits.cpu=1 \
+#        --set controller.resources.limits.memory=1Gi \
+#        --set controller.image.repository=${local.account_id}.dkr.ecr.ap-south-1.amazonaws.com/karpenter_controller \
+#        --set controller.image.digest="sha256:0a2b4f6364582dd0ffdf8dfe7f05d5b0e531ccdbb9e035fea3b316b5f5c72935"  \
+#        --wait; \
+#        CLUSTER_NAME=${var.cluster_name} ./karpenter/provisioner.yaml;
+#    EOL
+#  }
+#  depends_on = [
+#    null_resource.get_cluster_config,
+#    null_resource.deploy_karpenter_cf_template
+#  ]
+#}
 
 resource "null_resource" "deploy_s3_csi_driver" {
   # Run this provisioner always

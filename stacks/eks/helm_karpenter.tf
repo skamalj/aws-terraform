@@ -1,15 +1,9 @@
-provider "helm" {
-  kubernetes = {
-    config_path = "~/.kube/config"
-  }
-}
-
 resource "helm_release" "karpenter" {
   name       = "karpenter"
   namespace  = "karpenter"
   create_namespace = true
 
-  repository = "oci://public.ecr.aws/karpenter/karpenter"
+  repository = "oci://public.ecr.aws/karpenter/"
   chart      = "karpenter"
   version    = "1.7.1"
 
