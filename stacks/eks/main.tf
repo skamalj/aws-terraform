@@ -22,7 +22,7 @@ provider "tls" {
 # Configure the AWS Provider
 provider "aws" {
   region = "ap-south-1"
-  profile = "skamalj-dev"
+  profile = "dev"
 }
 
 

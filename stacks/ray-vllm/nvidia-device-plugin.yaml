@@ -18,8 +18,18 @@ spec:
       - key: nvidia.com/gpu
         operator: Exists
         effect: NoSchedule
-      nodeSelector:
-        karpenter.sh/nodepool: "gpu-pool"   # Only schedule on GPU nodes
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: karpenter.sh/nodepool
+                operator: In
+                values:
+                - gpu-pool-t4
+                - gpu-pool-a10
+                - gpu-pool-h100
+                - gpu-pool-l40s
       priorityClassName: "system-node-critical"
       containers:
       - image: 010526271896.dkr.ecr.ap-south-1.amazonaws.com/nvidia/k8s-device-plugin:v0.17.1

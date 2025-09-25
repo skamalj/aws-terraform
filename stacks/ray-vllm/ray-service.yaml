@@ -75,6 +75,8 @@ spec:
         num-gpus: "1"
       template:
         spec:
+          nodeSelector:
+            karpenter.sh/nodepool: gpu-pool-l40s
           tolerations:
             - key: "nvidia.com/gpu"
               operator: "Equal"
