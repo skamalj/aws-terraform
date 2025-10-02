@@ -1,9 +1,3 @@
-provider "helm" {
-  kubernetes = {
-    config_path = "~/.kube/config"
-  }
-}
-
 resource "helm_release" "kuberay_operator" {
   name       = "kuberay-operator"
   namespace  = "default" # change if you want it in another namespace
@@ -13,7 +7,7 @@ resource "helm_release" "kuberay_operator" {
 
   set = [{
     name  = "image.repository"
-    value = "010526271896.dkr.ecr.ap-south-1.amazonaws.com/kuberay/operator"
+    value = "${local.account_id}.dkr.ecr.ap-south-1.amazonaws.com/kuberay/operator"
   },
   {
     name  = "image.tag"

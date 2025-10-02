@@ -12,6 +12,10 @@ terraform {
       source = "hashicorp/tls"
       version = ">= 3.3.0"
     }
+    helm = {
+      source = "hashicorp/helm"
+      version = ">= 3.0.2"
+    }
   }
 }
 
@@ -19,10 +23,16 @@ terraform {
 provider "tls" {
 }
 
+provider "helm" {
+  kubernetes = {
+    config_path = "~/.kube/config"
+  }
+}
+
 # Configure the AWS Provider
 provider "aws" {
   region = "ap-south-1"
-  profile = "skamalj-dev"
+  profile = "dev"
 }
 
 

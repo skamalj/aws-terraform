@@ -18,13 +18,16 @@ spec:
           values: ["spot", "on-demand"]
         - key: karpenter.k8s.aws/instance-category
           operator: In
-          values: ["c", "m", "r"]
+          values: ["c", "m"]
+        - key: "karpenter.k8s.aws/instance-cpu"
+          operator: In
+          values: ["2", "4", "8"]
       nodeClassRef:
         group: karpenter.k8s.aws
         kind: EC2NodeClass
         name: cpu-class
   limits:
-    cpu: 100
+    cpu: 8
   disruption:
     consolidationPolicy: WhenEmptyOrUnderutilized
     consolidateAfter: 1m   
